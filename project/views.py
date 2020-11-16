@@ -19,4 +19,4 @@ def image_view(request):
   
   
 def calculations(request): 
-    return HttpResponse('CALC PAGES') 
+    return render(request, 'calculations.html')
