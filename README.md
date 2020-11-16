@@ -7,7 +7,7 @@ This is the repository for our Multimedia Project and will contain an applicatio
 * Provides a simple front end interface
 
 
-## Use intrucitons 
+## Use instructions 
 
 * To start the application ensure you have django installed using `python -m pip install Django`
 * Once installed, simply run `python manage.py runserver` to start up the built in local server used by django 
