@@ -25,7 +25,7 @@ def index(request):
 
     context = {
         'form': form,
-        'image_name': 'fire.jpg',
+        'image_name': 'project_image.jpg',
         'colors': COLORS
     }
 
