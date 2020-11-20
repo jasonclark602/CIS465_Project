@@ -8,24 +8,27 @@ COLORS = ('red', 'green', 'blue', 'rgb')
 # Create your views here.
 def index(request):
     if request.method == 'POST':
-        if request.FILES:
-            form = ImageForm(request.POST, request.FILES)
+        form = ImageForm(request.POST, request.FILES)
+        context = {
+            'form': form,
+            'colors': COLORS
+        }
+        if form.is_valid():
+            form.save()
+            img_obj = form.instance
+            context['img_obj'] = img_obj
 
-            if form.is_valid():
-                image_field = form.cleaned_data
-                form.save()
         else:
             for c in COLORS:
                 print(request.POST[c + '_slider'])
 
-        return redirect('project/index.html')
+        return render(request, 'project/index.html', context)
 
     else:
         form = ImageForm()
 
     context = {
         'form': form,
-        'image_name': 'project_image.jpg',
         'colors': COLORS
     }
 

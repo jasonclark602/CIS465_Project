@@ -4,7 +4,7 @@
         <link rel="stylesheet" type="text/css" href="{% static 'project/style.css' %}">
 </head>
 
-<img src="{% static 'project/images/' %}{{ image_name }}" height="200px" width="auto">
+<img src="{{ img_obj.image.url}}" alt="connect" height="200px" width="auto">
 
 <form method = "POST" enctype="multipart/form-data">
     {% csrf_token %}
