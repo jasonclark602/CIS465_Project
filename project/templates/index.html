@@ -1,21 +1,21 @@
 {% load static %}
-
-<!DOCTYPE html> 
 <html lang="en"> 
 <head>
         <meta charset="UTF-8">
-        <link rel="stylesheet" type="text/css" href="{% static 'project/style.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'project/style.css' %}" />
 </head>
 
-<img src= "{{ img_obj.image.url }}" height="200px" width="200px"></img>
+<div>
+    <img src= "{{ img_obj.image.url }}" alt="Upload Image"></img>
 
-
-<form method = "POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" value="Upload">Upload</button>
-</form>
-
+    <div>
+        <form method = "POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" value="Upload">Upload</button>
+        </form>
+    </div>
+</div>
 <div class="panel" id="right_sidebar">
         <h1>Image Enhancement</h1>
         <h2>Basic</h2>
@@ -29,9 +29,10 @@
         </form>
         <form method="POST" id="basic_form">
             {% csrf_token %}
+            <script type="text/javascript" src="{% static 'project/action.js' %}">s</script>
             {% for c in colors %}
-                <input name="{{ c }}_slider" type="range" min="0" max="1" value="0.5" step="0.1" class="class_slider" id="{{ c }}_slider_id">
-                <label for="{{ c }}_slider">{{ c }}</label><br>
+                <input name="{{ c }}_slider" type="range" min="0" max="1" value="0.5" step="0.1" class="slider" id="{{ c }}_slider_id">
+                <label for="{{ c }}_slider">{{ c }} <label class="demo">val</label></label><br>
             {% endfor %}
             <button type="submit" value="Update">Update</button>
         </form>
@@ -39,10 +40,5 @@
         <form method="POST" id="advanced_form">
             {% csrf_token %}
             <div>Gamma <input type="number" min="0" max="1" value="0.2" step="0.01"></div>
-        </form>
-        <h2>Entropies</h2>
-        <h4>1st Order Entropy: {{entropy}}</h4>
-        <h4></h4>
-        
+        </form> 
 </div>
-    
