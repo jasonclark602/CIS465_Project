@@ -1,7 +1,15 @@
-var slider = document.getElementsByClassName("slider");
-var output = document.getElementsByClassName("demo");
-output.innerHTML = slider.value;
+function getValue (slider, id) {
+  var span = document.getElementById(id);
+  span.innerText = slider.value;
 
-slider.oninput = function() {
-  output.innerHTML = this.value;
 }
+
+
+function changeInnerText(btnGray) {
+  if (btnGray.innerText != "GrayScale"){
+    btnGray.innerText = "GrayScale";
+  }
+  else {
+    btnGray.innerText = "RGB";
+  }
+}  

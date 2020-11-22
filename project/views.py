@@ -1,102 +1,78 @@
-from django.shortcuts import render, redirect
-
+from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404
+from .ImageAdjuster import _base, _histogram
 from .forms import *
-import numpy as np
-import os
 from PIL import Image as Img
-import math
-from .models import Adjustments as Adj, Image
+from .models import Image
+
+COLORS = ('Red', 'Green', 'Blue', 'RGB')
+UPLOADED_IMG = False
+M_ROOT = settings.MEDIA_ROOT
+IMG_ROOT = M_ROOT + 'images/'
+IMG_OBJ = None
 
 
-COLORS = ('red', 'green', 'blue', 'rgb')
-def _histogram(img):
-    histogram = np.zeros(256)
-    for i in range(img.size[0]):
-        for j in range(img.size[1]):
-            color = img.getpixel((i, j))
-            num = color
-            histogram[num] += 1
+def uploaded_photo(request):
+    global UPLOADED_IMG, IMG_OBJ
+    form = ImageForm(request.POST, request.FILES)
+    context = {'colors': COLORS, 'form': form}
+    if form.is_valid():
+        form.save()
+        UPLOADED_IMG = True
+        IMG_OBJ = form.instance
 
-    return histogram
+        try:
+            image = Img.open('./media/images/project_image.jpg')
+            image.save('./media/images/edit.jpg')
+            context['url_histogram'] = histogram_url()
+        except IOError as e:
+            print(e)
+            print('Could not duplicate image for edit.')
 
+        context['img_obj'] = IMG_OBJ
 
-def _entropy(probabilities):
-    num = 0
-    for x in probabilities:
-        if x == 0:
-            continue
-        num += x * math.log2(x)
-
-    num *= -1
-
-    return num
+    return index(request, context)
 
 
-def calculations():
-    path = os.path.abspath('.') + '\media\images\project_image.jpg'
+def histogram_url():
+    if UPLOADED_IMG:
+        path = './media/images/project_image.jpg'
+        image = Img.open(path)
+        hist = _histogram(image)
+        hist.savefig('./media/images/histogram.jpg', format='jpg')
+        return '/media/images/histogram.jpg'
 
-    path = path.replace('\\', '/')
+    return ''
 
-    img = Img.open(path)
-    entropy = 0
-    entropy2 = 0
-
-    gray_img = img.convert("L")
-    
-
-    total_pixels = gray_img.size[0] * gray_img.size[1]
-
-    # Histogram Calculation to Get probability
-    probabilities = _histogram(gray_img)
-
-    # Adjust array to contain P(r) values by dividing each element by total_pixels
-    for x in range(len(probabilities)):
-        probabilities[x] = probabilities[x] / total_pixels
-
-    # Calculate the Entropy
-    entropy = _entropy(probabilities)
-
-
-    return entropy
 
 # Create your views here.
-def index(request):
-    entropy = calculations()
-    if request.method == 'POST':
-        if request.FILES:
-            form = ImageForm(request.POST, request.FILES)
-            
-            context = {
-            'form': form,
-            'colors': COLORS,
-            'entropy':entropy,
-            }
+def index(request, context=None):
+    if context is None:
+        context = {}
 
-            if form.is_valid():
-                form.save()
-                img_obj = form.instance
-                context['img_obj'] = img_obj
-                
+    if request.method == 'POST' and not UPLOADED_IMG:
+        uploaded_photo(request)
 
-                
-        else:
-            for c in COLORS:
-                print(request.POST[c + '_slider'])
+    context['form'] = ImageForm()
 
-        return render(request, 'index.html', context)
-
-    else:
-        form = ImageForm()
-
-    
-    context = {
-        'form': form,
-        'image_name': 'project_image.jpg',
-        'colors': COLORS,
-        'entropy': entropy,
-     
-        
-    }
-    
     return render(request, 'index.html', context)
 
+
+def update_base(request):
+    if UPLOADED_IMG:
+        basic_obj = get_object_or_404(BasicForm, pk=1)
+        basic_obj.base.is_gray = not basic_obj.base.is_gray
+        isGray = basic_obj.base.is_gray
+        _base(isGray)
+
+    return index(request)
+
+
+def basic(request):
+    context = {}
+
+    return render(request, 'index.html', context)
+
+
+def advanced(request):
+    context = {}

@@ -1,13 +1,16 @@
 body {
     display: flex;
     background-color: gray;
-   justify-content: center;
-   align-items: center;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, Helvetica, sans-serif;
+    color: white;
 }
 
 button {
     text-align: center;
     padding: 10px;
+    margin: 10px;
     transition: all 0.3s ease;
     color: white;
     font-size: 28px;
@@ -24,7 +27,12 @@ button:active {
 
 #right_sidebar {
     justify-content: center;
+    align-content: center;
+    padding: 20px;
     margin-left: 20px;
+    background-color: rgb(34, 34, 34);
+    width: 400px;
+    height: 90%;
 }
 
 #top_left {
@@ -32,9 +40,13 @@ button:active {
     flex-direction: column;
 }
 
-img {
-    width: 500px;
-    height: auto;
+#img_main {
+    width: 1000px;
+}
+
+#img_histogram{
+    width: 100%;
+    height:auto;
 }
 
 .slidecontainer {
@@ -51,6 +63,22 @@ outline: none;
 opacity: 0.7;
 -webkit-transition: .2s;
 transition: opacity .2s;
+}
+
+#red_slider {
+    background: linear-gradient(90deg, black 0%, rgba(255,0,0,1) 50%, white 100%);
+}
+
+#green_slider {
+    background: linear-gradient(90deg, black 0%, rgba(0,255,0,1) 50%, white 100%);
+}
+
+#blue_slider {
+    background: linear-gradient(90deg, black 0%, rgba(0,0,255,1) 50%, white 100%);
+}
+
+#rgb_slider {
+    background: linear-gradient(90deg, black 0%, rgba(125,125,125,1) 50%, white 100%);
 }
 
 .slider:hover {

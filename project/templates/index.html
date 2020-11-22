@@ -3,42 +3,55 @@
 <head>
         <meta charset="UTF-8">
         <link rel="stylesheet" type="text/css" href="{% static 'project/style.css' %}" />
+        <script src="{% static 'project/action.js' %}"></script>
 </head>
 
+<!-- Image Panel -->
 <div>
-    <img src= "{{ img_obj.image.url }}" alt="Upload Image"></img>
-
     <div>
-        <form method = "POST" enctype="multipart/form-data">
+        <h1>Image Enhancement</h1>
+        {% if img_obj %}
+        <img src= "{{ img_obj.image.url }}" alt="User Image" id="img_main">
+        {% else %}
+        <img src="{% static 'project/images/upload.jpg' %}" alt="Upload Image" id="img_main"/>
+        {% endif %}
+    </div>
+    <div>
+        <form method = "POST" action="{% url 'project:uploaded_photo' %}" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit" value="Upload">Upload</button>
         </form>
+
     </div>
 </div>
+
+<!-- Adjustments Panel -->
 <div class="panel" id="right_sidebar">
-        <h1>Image Enhancement</h1>
-        <h2>Basic</h2>
-        <button>RGB to Grayscale</button>
-        <form method = "POST">
+        <h2>Basic Adjustments</h2>
+        <form method = "POST" action="{% url 'project:update_base' %}" ><!-- -->
+            {% csrf_token %}
+            <button name="base" id="btn_grayscale">{{ base }}</button>
+        </form>
+        <form method="POST" action="" id="basic_form">
             {% csrf_token %}
             <input type="radio" id="saturation" name="basic_adjustment" value="saturation">
             <label for="saturation">Saturation</label><br>
             <input type="radio" id="brightness" name="basic_adjustment" value="brightness">
             <label for="brightness">Brightness</label><br>
-        </form>
-        <form method="POST" id="basic_form">
-            {% csrf_token %}
-            <script type="text/javascript" src="{% static 'project/action.js' %}">s</script>
+            
             {% for c in colors %}
-                <input name="{{ c }}_slider" type="range" min="0" max="1" value="0.5" step="0.1" class="slider" id="{{ c }}_slider_id">
-                <label for="{{ c }}_slider">{{ c }} <label class="demo">val</label></label><br>
+                <label for="{{ c }}_slider">{{ c }} <span id="{{ c }}_span" >0.5</span></label>
+                <input name="{{ c }}_slider" type="range" oninput="getValue(this, '{{ c }}_span')" min="0" max="1" value="0.5" step="0.05" class="slider" id="{{ c }}_slider">
+                <br>
             {% endfor %}
             <button type="submit" value="Update">Update</button>
         </form>
-        <h2>Advanced</h2>
+        <h2>Advanced Adjustments</h2>
         <form method="POST" id="advanced_form">
             {% csrf_token %}
             <div>Gamma <input type="number" min="0" max="1" value="0.2" step="0.01"></div>
+            <div><button type="">Edge</button>
         </form> 
+        <div><img src="{{ url_histogram }}" id="img_histogram" alt="Histogram"/></div>
 </div>

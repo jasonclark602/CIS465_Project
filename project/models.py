@@ -36,13 +36,23 @@ class Image(models.Model):
     image = models.ImageField(upload_to=upload_to('images/'), storage=OverwriteStorage())
 
 
-class Adjustments(models.Model):
-    gray = models.BooleanField(default=False)
-    adjustment = models.CharField(max_length=12)
-    red_value = models.IntegerField(default=200)
-    green_value = models.IntegerField(default=200)
-    blue_value = models.IntegerField(default=200)
-    gamma = models.IntegerField(default=0.5)
-    image = models.ForeignKey(Image, on_delete=models.CASCADE)
+class BaseAdjustment(models.Model):
+    is_gray = models.BooleanField(default=False)
 
+
+class TypeAdjustment(models.Model):
+    is_brightness = models.BooleanField(default=True)
+
+
+class RGBAdjustments(models.Model):
+    red_value = models.IntegerField(default=100)
+    green_value = models.IntegerField(default=100)
+    blue_value = models.IntegerField(default=100)
+
+
+class BasicForm(models.Model):
+    model = models.Model
+    base = BaseAdjustment(model)
+    rgb = RGBAdjustments(model)
+    bright = TypeAdjustment(model)
 
