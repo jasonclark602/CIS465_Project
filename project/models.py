@@ -48,11 +48,3 @@ class RGBAdjustments(models.Model):
     red_value = models.IntegerField(default=100)
     green_value = models.IntegerField(default=100)
     blue_value = models.IntegerField(default=100)
-
-
-class BasicForm(models.Model):
-    model = models.Model
-    base = BaseAdjustment(model)
-    rgb = RGBAdjustments(model)
-    bright = TypeAdjustment(model)
-

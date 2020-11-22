@@ -8,7 +8,7 @@ import os
 
 import math
 
-EDIT_IMG_PATH = '/media/images/edit.jpg'
+EDIT_IMG_PATH = './media/images/edit.jpg'
 
 
 def _adjust_rgb():
@@ -17,9 +17,8 @@ def _adjust_rgb():
 
 def _base(is_gray):
     if is_gray:
-        image = Img.open(EDIT_IMG_PATH)
-        image.convert("L")
-        image.save()
+        image = Img.open(EDIT_IMG_PATH).convert('L')
+        image.save(EDIT_IMG_PATH)
         image.close()
 
 

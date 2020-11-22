@@ -42,11 +42,14 @@ button:active {
 
 #img_main {
     width: 1000px;
+    background-image: url("./images/upload.jpg");
+    background-repeat: no-repeat;
+    background-size: contain;
 }
 
 #img_histogram{
-    width: 100%;
-    height:auto;
+    width: 400px;
+    height: 300px;
 }
 
 .slidecontainer {

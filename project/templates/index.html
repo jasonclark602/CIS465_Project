@@ -10,11 +10,7 @@
 <div>
     <div>
         <h1>Image Enhancement</h1>
-        {% if img_obj %}
-        <img src= "{{ img_obj.image.url }}" alt="User Image" id="img_main">
-        {% else %}
-        <img src="{% static 'project/images/upload.jpg' %}" alt="Upload Image" id="img_main"/>
-        {% endif %}
+        <img src= "{{ img_url }}" alt="User Image" id="img_main">
     </div>
     <div>
         <form method = "POST" action="{% url 'project:uploaded_photo' %}" enctype="multipart/form-data">
