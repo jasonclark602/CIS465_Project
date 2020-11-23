@@ -48,3 +48,13 @@ class RGBAdjustments(models.Model):
     red_value = models.IntegerField(default=100)
     green_value = models.IntegerField(default=100)
     blue_value = models.IntegerField(default=100)
+
+
+class Difference(models.Model):
+    is_diff = models.BooleanField(default=False)
+
+
+class Color:
+    def __init__(self, name, val):
+        self.name = name
+        self.val = val

@@ -40,3 +40,7 @@ function changeLabel(checkbox){
     sliders[i].style.background = bg[i];
   }
 }
+
+function changeSrc(image){
+  image.src = "/media/images/project_image.jpg"
+}

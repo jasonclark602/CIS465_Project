@@ -1,33 +1,51 @@
 # Image and other imports
 import matplotlib
-from PIL import Image as Img
+from PIL import ImageEnhance as Ime, Image as Img
 
 matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 import numpy as np
 import math
+from .constants import *
 
-EDIT_IMG_PATH = './media/images/edit.jpg'
+
+def open_img(path, errmsg):
+    try:
+        return Img.open(path, mode='r')
+    except IOError as e:
+        print(e)
+        print(errmsg)
 
 
-def _adjust_rgb():
-    return 0
+def _adjust_brightness(r, g, b):
+    img = Img.open(EDIT_IMG_PATH, 'failed to adjust rgb')
+
+    red, green, blue = img.split()
+
+    red = Ime.Brightness.enhance(red, r / 50)
+    blue = Ime.Brightness.enhance(blue, b / 50)
+    green = Ime.Brightness.enhance(green, g / 50)
+
+    enhanced = img.merge('RGB', (red, green, blue))
+
+    enhanced.save(EDIT_IMG_PATH)
+
+    enhanced.close()
+    img.close()
 
 
 def _base(is_gray):
     if is_gray:
-        image = Img.open(EDIT_IMG_PATH).convert('L')
-        _histogram(image, is_gray)
-        image.save(EDIT_IMG_PATH)
-        image.close()
+        image = open_img(EDIT_IMG_PATH, 'failed at _base').convert('L')
     else:
-        image = Img.open('./media/images/project_image.jpg')
-        image.save('./media/images/edit.jpg')
-        _histogram(image, is_gray)
-        image.close()
+        image = Img.open(PROJ_IMG_PATH)
+
+    image.save(EDIT_IMG_PATH)
+    image.close()
 
 
-def _histogram(img, is_gray):
+def _histogram(is_gray):
+    img = open_img(EDIT_IMG_PATH, 'failed to create histogram')
     if not is_gray:
         red, green, blue = img.split()
         histogram, bin_edges = np.histogram(red, bins=256, range=(0, 256))
@@ -38,17 +56,18 @@ def _histogram(img, is_gray):
         plt.plot(bin_edges[0:-1], histogram, color='b')
         plt.title('RGB Histogram')
         plt.xlabel('Color Value')
-        plt.ylabel('Pixels')
-        plt.savefig('./media/images/histogram.jpg', format='jpg')
-        plt.close()
+
     else:
         histogram, bin_edges = np.histogram(img, bins=256, range=(0, 256))
         plt.plot(bin_edges[0:-1], histogram, color='k')
         plt.title('Gray Histogram')
         plt.xlabel('Intensity Value')
-        plt.ylabel('Pixels')
-        plt.savefig('./media/images/histogram.jpg', format='jpg')
-        plt.close()
+
+    plt.ylabel('Pixels')
+    plt.savefig(HIST_IMG_PATH, format='jpg')
+
+    plt.close()
+    img.close()
 
 
 def _entropy(probabilities):
@@ -63,19 +82,23 @@ def _entropy(probabilities):
     return num
 
 
-def _difference_transformation(img):
-    img_copy = img.convert("L")
+def _difference_transformation():
+    img = open_img(PROJ_IMG_PATH, 'failed at _diff').convert('L')
+    img_copy = img.copy()
 
-    for x in range(img_copy.size[0]):
-        for y in range(img_copy.size[1]):
+    for x in range(img.size[0]):
+        for y in range(img.size[1]):
             if x == 0:
                 continue
             else:
-                num1 = img_copy.getpixel((x, y))
-                num2 = img_copy.getpixel((x - 1, y))
+                num1 = img.getpixel((x, y))
+                num2 = img.getpixel((x - 1, y))
                 result = (num1 - num2) % 256
-                img.putpixel((x, y), result)
-    return img
+                img_copy.putpixel((x, y), result)
+
+    img_copy.save(EDIT_IMG_PATH)
+    img_copy.close()
+    img.close()
 
 
 def _histogram2(img):
@@ -89,17 +112,8 @@ def _histogram2(img):
     return histogram
 
 
-def calculations():
-    try:
-        img = Img.open(EDIT_IMG_PATH)
-    except IOError:
-        print('Cannot open edit image.')
-        return 0
-
-    entropy = 0
-    entropy2 = 0
-
-    gray_img = img.convert("L")
+def entropy():
+    gray_img = open_img(EDIT_IMG_PATH, 'failed at 105').convert('L')
 
     total_pixels = gray_img.size[0] * gray_img.size[1]
 
@@ -110,7 +124,7 @@ def calculations():
     for x in range(len(probabilities)):
         probabilities[x] = probabilities[x] / total_pixels
 
-    # Calculate the Entropy
-    entropy = _entropy(probabilities)
+    gray_img.close()
 
-    return entropy
+    # Calculate the Entropy
+    return _entropy(probabilities)

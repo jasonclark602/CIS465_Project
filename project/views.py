@@ -1,78 +1,101 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from .ImageAdjuster import _base, _histogram, EDIT_IMG_PATH, calculations
+from django.shortcuts import render, get_object_or_404
+from .ImageAdjuster import _base, _histogram, entropy, _adjust_brightness, _difference_transformation
 from .forms import *
 from PIL import Image as Img
+from .constants import *
 
-
-COLORS = ('Red', 'Green', 'Blue')
+COLORS = ()
+CONTEXT = {}
 UPLOADED_IMG = False
-IMG_OBJ = None
-CONTEXT = {'colors': COLORS, 'form': ImageForm(), 'base': 'RGB'}
+STARTUP = True
 
 
 # Create your views here.
 def index(request):
-    if request.method == 'POST' and not UPLOADED_IMG:
-        uploaded_photo(request)
+    global STARTUP, COLORS, CONTEXT
+
+    if STARTUP:
+        rgb = get_object_or_404(RGBAdjustments, pk=1)
+        COLORS = (
+            Color('Red', rgb.red_value),
+            Color('Green', rgb.green_value),
+            Color('Blue', rgb.blue_value)
+        )
+
+        base = get_object_or_404(BaseAdjustment, pk=1)
+        base_str = 'Gray' if base.is_gray else 'RGB'
+
+        CONTEXT = {
+            'colors': COLORS,
+            'img_obj':  EDIT_IMG_PATH,
+            'form': ImageForm(),
+            'base': base_str
+        }
+        STARTUP = False
 
     return render(request, 'index.html', CONTEXT)
 
 
 def uploaded_photo(request):
-    global UPLOADED_IMG, IMG_OBJ
-    if request.method == 'POST':
+    if request.method == 'POST' and request.FILES is not None:
         form = ImageForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            UPLOADED_IMG = True
-            IMG_OBJ = form.instance
 
             try:
-                image = Img.open('./media/images/project_image.jpg')
+                image = Img.open(PROJ_IMG_PATH)
                 image.save(EDIT_IMG_PATH)
-                CONTEXT['url_histogram'] = histogram_url()
+                global UPLOADED_IMG
+                UPLOADED_IMG = True
+                base = get_object_or_404(BaseAdjustment, pk=1)
+                base.is_gray = False
+                base.save()
+                diff = get_object_or_404(Difference, pk=1)
+                diff.is_diff = False
+                diff.save()
             except IOError as e:
                 print(e)
                 print('Could not duplicate image for edit.')
+                raise e
 
-            CONTEXT['img_url'] = '/media/images/edit.jpg'
-        entropy = calculations()
-        CONTEXT['entropy'] = entropy
+            _histogram(False)
+            CONTEXT['url_histogram'] = str(HIST_IMG_PATH[1:])
+            CONTEXT['img_url'] = str(EDIT_IMG_PATH[1:])
+            CONTEXT['entropy'] = entropy()
     else:
         index(request)
+
     return render(request, 'index.html', CONTEXT)
 
 
-def histogram_url():
-    if UPLOADED_IMG:
-        image = Img.open('./media/images/edit.jpg')
-        _histogram(image, is_gray=False)
-        return '/media/images/histogram.jpg'
-
-    return None
-
-
-def update_base(request):
+def update(request):
     if UPLOADED_IMG:
         base = get_object_or_404(BaseAdjustment, pk=1)
-        base.is_gray = not base.is_gray
-        base.save()
-        if base.is_gray:
-            CONTEXT['base'] = 'Gray'
-        else:
-            CONTEXT['base'] = 'RGB'
+        if 'base' in request.POST:
+            base.is_gray = not base.is_gray
+            base.save()
+            _base(base.is_gray)
+            CONTEXT['base'] = 'Gray' if base.is_gray else 'RGB'
 
-        _base(base.is_gray)
+        elif 'basic' in request.POST:
+            rgb = get_object_or_404(RGBAdjustments, pk=1)
+            rgb.red_value = int(request.POST['Red_slider'])
+            rgb.green_val = int(request.POST['Green_slider'])
+            rgb.blue_value = int(request.POST['Blue_slider'])
+            rgb.save()
 
-    CONTEXT['img_url'] = '/media/images/edit.jpg'
+            _adjust_brightness(rgb.red_value, rgb.green_val, rgb.blue_value)
+
+        elif 'diff_trans' in request.POST:
+            diff = get_object_or_404(Difference, pk=1)
+            if not diff.is_diff:
+                _difference_transformation()
+                diff.is_diff = True
+                diff.save()
+                base.is_gray = True
+                base.save()
+
+        _histogram(base.is_gray)
+        CONTEXT['entropy'] = entropy()
+
     return render(request, 'index.html', CONTEXT)
-
-
-def basic(request):
-    context = {}
-
-    return render(request, 'index.html', context)
-
-
-def advanced(request):
-    context = {}
