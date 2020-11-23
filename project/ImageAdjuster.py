@@ -18,15 +18,24 @@ def open_img(path, errmsg):
 
 
 def _adjust_brightness(r, g, b):
-    img = Img.open(EDIT_IMG_PATH, 'failed to adjust rgb')
-
+    #img = Img.open('./media/images/edit.jpg', 'failed to adjust rgb')
+    img = Img.open(EDIT_IMG_PATH)
     red, green, blue = img.split()
 
-    red = Ime.Brightness.enhance(red, r / 50)
-    blue = Ime.Brightness.enhance(blue, b / 50)
-    green = Ime.Brightness.enhance(green, g / 50)
+    # red = Ime.Brightness.enhance(red, r / 50)
+    # blue = Ime.Brightness.enhance(blue, b / 50)
+    # green = Ime.Brightness.enhance(green, g / 50)
 
-    enhanced = img.merge('RGB', (red, green, blue))
+    red_enhancer = Ime.Brightness(red)
+    blue_enhancer = Ime.Brightness(blue)
+    green_enhancer = Ime.Brightness(green)
+
+    new_red = red_enhancer.enhance(r/50)
+    new_blue = blue_enhancer.enhance(b/50)
+    new_green = green_enhancer.enhance(g/50)
+
+    
+    enhanced = Img.merge('RGB', (new_red, new_green, new_blue))
 
     enhanced.save(EDIT_IMG_PATH)
 
