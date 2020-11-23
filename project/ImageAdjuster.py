@@ -20,6 +20,10 @@ def _base(is_gray):
         image = Img.open(EDIT_IMG_PATH).convert('L')
         image.save(EDIT_IMG_PATH)
         image.close()
+    else:
+        image = Img.open('./media/images/project_image.jpg')
+        image.save(EDIT_IMG_PATH)
+        image.close()
 
 
 def _histogram(img):

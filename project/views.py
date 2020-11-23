@@ -7,7 +7,7 @@ from PIL import Image as Img
 COLORS = ('Red', 'Green', 'Blue', 'RGB')
 UPLOADED_IMG = False
 IMG_OBJ = None
-CONTEXT = {'colors': COLORS, 'form': ImageForm()}
+CONTEXT = {'colors': COLORS, 'form': ImageForm(), 'base': 'RGB'}
 
 
 # Create your views here.
@@ -41,7 +41,7 @@ def uploaded_photo(request):
 
 def histogram_url():
     if UPLOADED_IMG:
-        image = Img.open('./media/images/project_image.jpg')
+        image = Img.open('./media/images/edit.jpg')
         hist = _histogram(image)
         hist.savefig('./media/images/histogram.jpg', format='jpg')
         return '/media/images/histogram.jpg'
@@ -51,10 +51,16 @@ def histogram_url():
 
 def update_base(request):
     if UPLOADED_IMG:
-        basic_obj = get_object_or_404(BaseAdjustment, pk=1)
-        basic_obj.is_gray = not basic_obj.is_gray
-        isGray = basic_obj.is_gray
-        _base(isGray)
+        base = get_object_or_404(BaseAdjustment, pk=1)
+        base.is_gray = not base.is_gray
+
+        if base.is_gray:
+            CONTEXT['base'] = 'Gray'
+        else:
+            CONTEXT['base'] = 'RGB'
+
+        _base(base.is_gray)
+
     CONTEXT['img_url'] = '/media/images/edit.jpg'
     return render(request, 'index.html', CONTEXT)
 
