@@ -21,7 +21,7 @@ def _base(is_gray):
         image.close()
     else:
         image = Img.open('./media/images/project_image.jpg')
-        image.save(EDIT_IMG_PATH)
+        image.save('edit.jpg')
         image.close()
 
 
