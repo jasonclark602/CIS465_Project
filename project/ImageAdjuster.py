@@ -5,7 +5,6 @@ from matplotlib import pyplot as plt
 import numpy as np
 import os
 
-
 import math
 
 EDIT_IMG_PATH = './media/images/edit.jpg'
@@ -40,7 +39,6 @@ def _histogram(img):
     return plt
 
 
-
 def _entropy(probabilities):
     num = 0
     for x in probabilities:
@@ -67,15 +65,18 @@ def _difference_transformation(img):
                 img.putpixel((x, y), result)
     return img
 
+
 def _histogram2(img):
     histogram = np.zeros(256)
     for i in range(img.size[0]):
         for j in range(img.size[1]):
-            color = img.getpixel((i,j))
+            color = img.getpixel((i, j))
             num = color
             histogram[num] += 1
 
     return histogram
+
+
 def calculations():
     try:
         img = Img.open(EDIT_IMG_PATH)
@@ -101,4 +102,3 @@ def calculations():
     entropy = _entropy(probabilities)
 
     return entropy
-
