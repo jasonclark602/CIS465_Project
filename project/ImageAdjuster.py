@@ -1,10 +1,9 @@
 # Image and other imports
+import matplotlib
 from PIL import Image as Img
-from django.conf import settings
+matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 import numpy as np
-import os
-
 import math
 
 EDIT_IMG_PATH = './media/images/edit.jpg'
@@ -17,27 +16,38 @@ def _adjust_rgb():
 def _base(is_gray):
     if is_gray:
         image = Img.open(EDIT_IMG_PATH).convert('L')
+        _histogram(image, is_gray)
         image.save(EDIT_IMG_PATH)
         image.close()
     else:
         image = Img.open('./media/images/project_image.jpg')
-        image.save('edit.jpg')
+        image.save('./media/images/edit.jpg')
+        _histogram(image, is_gray)
         image.close()
 
 
-def _histogram(img):
-    red, green, blue = img.split()
-    histogram, bin_edges = np.histogram(red, bins=256, range=(0, 256))
-    plt.plot(bin_edges[0:-1], histogram, color='r')
-    histogram, bin_edges = np.histogram(green, bins=256, range=(0, 256))
-    plt.plot(bin_edges[0:-1], histogram, color='g')
-    histogram, bin_edges = np.histogram(blue, bins=256, range=(0, 256))
-    plt.plot(bin_edges[0:-1], histogram, color='b')
-    plt.title('RGB Histogram')
-    plt.xlabel('Color Value')
-    plt.ylabel('Pixels')
-    return plt
-
+def _histogram(img, is_gray):
+    if not is_gray:
+        red, green, blue = img.split()
+        histogram, bin_edges = np.histogram(red, bins=256, range=(0, 256))
+        plt.plot(bin_edges[0:-1], histogram, color='r')
+        histogram, bin_edges = np.histogram(green, bins=256, range=(0, 256))
+        plt.plot(bin_edges[0:-1], histogram, color='g')
+        histogram, bin_edges = np.histogram(blue, bins=256, range=(0, 256))
+        plt.plot(bin_edges[0:-1], histogram, color='b')
+        plt.title('RGB Histogram')
+        plt.xlabel('Color Value')
+        plt.ylabel('Pixels')
+        plt.savefig('./media/images/histogram.jpg', format='jpg')
+        plt.close()
+    else:
+        histogram, bin_edges = np.histogram(img, bins=256, range=(0, 256))
+        plt.plot(bin_edges[0:-1], histogram, color='k')
+        plt.title('Gray Histogram')
+        plt.xlabel('Intensity Value')
+        plt.ylabel('Pixels')
+        plt.savefig('./media/images/histogram.jpg', format='jpg')
+        plt.close()
 
 def _entropy(probabilities):
     num = 0

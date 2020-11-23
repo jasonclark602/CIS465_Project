@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .ImageAdjuster import _base, _histogram, EDIT_IMG_PATH, calculations
 from .forms import *
 from PIL import Image as Img
@@ -43,8 +43,7 @@ def uploaded_photo(request):
 def histogram_url():
     if UPLOADED_IMG:
         image = Img.open('./media/images/edit.jpg')
-        hist = _histogram(image)
-        hist.savefig('./media/images/histogram.jpg', format='jpg')
+        _histogram(image, is_gray=False)
         return '/media/images/histogram.jpg'
 
     return None
@@ -54,7 +53,7 @@ def update_base(request):
     if UPLOADED_IMG:
         base = get_object_or_404(BaseAdjustment, pk=1)
         base.is_gray = not base.is_gray
-
+        base.save()
         if base.is_gray:
             CONTEXT['base'] = 'Gray'
         else:
