@@ -46,8 +46,8 @@
         <h2>Advanced Adjustments</h2>
         <form method="POST" id="advanced_form">
             {% csrf_token %}
-            <div>Gamma <input type="number" min="0" max="1" value="0.2" step="0.01"></div>
-            <div><button type="">Edge</button>
+            <div>Entropy: {{ entropy }}</div>
+            
         </form> 
         <div><img src="{{ url_histogram }}" id="img_histogram" alt="Histogram"/></div>
 </div>
