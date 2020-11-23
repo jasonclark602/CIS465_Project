@@ -67,7 +67,15 @@ def _difference_transformation(img):
                 img.putpixel((x, y), result)
     return img
 
+def _histogram2(img):
+    histogram = np.zeros(256)
+    for i in range(img.size[0]):
+        for j in range(img.size[1]):
+            color = img.getpixel((i,j))
+            num = color
+            histogram[num] += 1
 
+    return histogram
 def calculations():
     try:
         img = Img.open(EDIT_IMG_PATH)
@@ -83,7 +91,7 @@ def calculations():
     total_pixels = gray_img.size[0] * gray_img.size[1]
 
     # Histogram Calculation to Get probability
-    probabilities = _histogram(gray_img)
+    probabilities = _histogram2(gray_img)
 
     # Adjust array to contain P(r) values by dividing each element by total_pixels
     for x in range(len(probabilities)):

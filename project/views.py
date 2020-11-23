@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .ImageAdjuster import _base, _histogram, EDIT_IMG_PATH
+from .ImageAdjuster import _base, _histogram, EDIT_IMG_PATH, calculations
 from .forms import *
 from PIL import Image as Img
 
@@ -35,7 +35,8 @@ def uploaded_photo(request):
             print('Could not duplicate image for edit.')
 
         CONTEXT['img_url'] = '/media/images/edit.jpg'
-
+    entropy = calculations()
+    CONTEXT['entropy'] = entropy
     return render(request, 'index.html', CONTEXT)
 
 
