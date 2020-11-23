@@ -19,4 +19,3 @@ class RGBAdjustments(forms.Form):
     r = forms.IntegerField(max_value=100, min_value=0)
     g = forms.IntegerField(max_value=100, min_value=0)
     b = forms.IntegerField(max_value=100, min_value=0)
-

@@ -4,14 +4,14 @@ from .forms import *
 from PIL import Image as Img
 
 
-COLORS = ('Red', 'Green', 'Blue', 'RGB')
+COLORS = ('Red', 'Green', 'Blue')
 UPLOADED_IMG = False
 IMG_OBJ = None
 CONTEXT = {'colors': COLORS, 'form': ImageForm(), 'base': 'RGB'}
 
 
 # Create your views here.
-def index(request, context=None):
+def index(request):
     if request.method == 'POST' and not UPLOADED_IMG:
         uploaded_photo(request)
 
@@ -20,23 +20,26 @@ def index(request, context=None):
 
 def uploaded_photo(request):
     global UPLOADED_IMG, IMG_OBJ
-    form = ImageForm(request.POST, request.FILES)
-    if form.is_valid():
-        form.save()
-        UPLOADED_IMG = True
-        IMG_OBJ = form.instance
+    if request.method == 'POST':
+        form = ImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            UPLOADED_IMG = True
+            IMG_OBJ = form.instance
 
-        try:
-            image = Img.open('./media/images/project_image.jpg')
-            image.save(EDIT_IMG_PATH)
-            CONTEXT['url_histogram'] = histogram_url()
-        except IOError as e:
-            print(e)
-            print('Could not duplicate image for edit.')
+            try:
+                image = Img.open('./media/images/project_image.jpg')
+                image.save(EDIT_IMG_PATH)
+                CONTEXT['url_histogram'] = histogram_url()
+            except IOError as e:
+                print(e)
+                print('Could not duplicate image for edit.')
 
-        CONTEXT['img_url'] = '/media/images/edit.jpg'
-    entropy = calculations()
-    CONTEXT['entropy'] = entropy
+            CONTEXT['img_url'] = '/media/images/edit.jpg'
+        entropy = calculations()
+        CONTEXT['entropy'] = entropy
+    else:
+        index(request)
     return render(request, 'index.html', CONTEXT)
 
 

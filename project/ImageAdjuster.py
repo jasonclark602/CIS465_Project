@@ -1,6 +1,7 @@
 # Image and other imports
 import matplotlib
 from PIL import Image as Img
+
 matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 import numpy as np
@@ -48,6 +49,7 @@ def _histogram(img, is_gray):
         plt.ylabel('Pixels')
         plt.savefig('./media/images/histogram.jpg', format='jpg')
         plt.close()
+
 
 def _entropy(probabilities):
     num = 0
