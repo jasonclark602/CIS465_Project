@@ -17,17 +17,22 @@ def open_img(path, errmsg):
         print(errmsg)
 
 
+def _reset():
+    img = open_img(PROJ_IMG_PATH, 'Reset Error')
+    img.save(EDIT_IMG_PATH)
+    img.close()
+
+
 def _adjust_brightness(r, g, b):
-    img = Img.open(EDIT_IMG_PATH, 'failed to adjust rgb')
+    img = open_img(EDIT_IMG_PATH, 'failed to adjust rgb')
 
     red, green, blue = img.split()
 
-    red = Ime.Brightness.enhance(red, r / 50)
-    blue = Ime.Brightness.enhance(blue, b / 50)
-    green = Ime.Brightness.enhance(green, g / 50)
+    red = Ime.Brightness(red).enhance(r / 50)
+    blue = Ime.Brightness(blue).enhance(b / 50)
+    green = Ime.Brightness(green).enhance(g / 50)
 
-    enhanced = img.merge('RGB', (red, green, blue))
-
+    enhanced = Img.merge('RGB', (red, green, blue))
     enhanced.save(EDIT_IMG_PATH)
 
     enhanced.close()
@@ -37,16 +42,16 @@ def _adjust_brightness(r, g, b):
 def _base(is_gray):
     if is_gray:
         image = open_img(EDIT_IMG_PATH, 'failed at _base').convert('L')
+        image.save(EDIT_IMG_PATH)
+        image.close()
     else:
-        image = Img.open(PROJ_IMG_PATH)
-
-    image.save(EDIT_IMG_PATH)
-    image.close()
+        _reset()
 
 
-def _histogram(is_gray):
+def _histogram():
     img = open_img(EDIT_IMG_PATH, 'failed to create histogram')
-    if not is_gray:
+
+    if img.mode != 'L':
         red, green, blue = img.split()
         histogram, bin_edges = np.histogram(red, bins=256, range=(0, 256))
         plt.plot(bin_edges[0:-1], histogram, color='r')
@@ -56,7 +61,6 @@ def _histogram(is_gray):
         plt.plot(bin_edges[0:-1], histogram, color='b')
         plt.title('RGB Histogram')
         plt.xlabel('Color Value')
-
     else:
         histogram, bin_edges = np.histogram(img, bins=256, range=(0, 256))
         plt.plot(bin_edges[0:-1], histogram, color='k')

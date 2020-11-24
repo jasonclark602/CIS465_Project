@@ -1,10 +1,9 @@
-from django.utils import timezone
-from django.db import models
-from django.conf import settings
-from django.core.files.storage import FileSystemStorage
-import datetime
 import os
 from functools import partial
+
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+from django.db import models
 
 
 # Create your models here
@@ -38,10 +37,6 @@ class Image(models.Model):
 
 class BaseAdjustment(models.Model):
     is_gray = models.BooleanField(default=False)
-
-
-class TypeAdjustment(models.Model):
-    is_brightness = models.BooleanField(default=True)
 
 
 class RGBAdjustments(models.Model):
