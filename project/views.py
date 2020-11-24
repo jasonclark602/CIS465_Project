@@ -84,7 +84,7 @@ def update(request):
             _base(base.is_gray)
             CONTEXT['base'] = 'Reset' if base.is_gray else 'Gray'
             CONTEXT['hist_base_txt'] = 'Gray' if base.is_gray else 'RGB'
-        elif 'basic' in request.POST:
+        elif 'basic' in request.POST and not base.is_gray:
             rgb = get_object_or_404(RGBAdjustments, pk=1)
             rgb.red_value = int(request.POST['Red_slider'])
             rgb.green_val = int(request.POST['Green_slider'])

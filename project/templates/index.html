@@ -9,7 +9,9 @@
 <div>
     <div>
         <h1>Image Enhancement</h1>
-        <img alt="User Image" id="img_main" src="{{ img_url }}">
+        <div id="main_img_container">
+            <img alt="User Image" id="img_main" src="{{ img_url }}">
+        </div>
     </div>
     <div>
         <form action="{% url 'project:uploaded_photo' %}" autocomplete="off" enctype="multipart/form-data" id="upload_form"
