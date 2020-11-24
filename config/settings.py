@@ -1,5 +1,6 @@
-from pathlib import Path
 import os
+from pathlib import Path
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
@@ -13,7 +14,6 @@ SECRET_KEY = '2ajeki2!_b3ib0v=bbcfjb771nucg1&%ugdp5o&pz)e)1e)iof'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -63,7 +63,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/

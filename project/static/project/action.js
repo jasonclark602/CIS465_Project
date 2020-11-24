@@ -1,6 +1,6 @@
 function getValue (slider, id) {
   var span = document.getElementById(id);
-  span.innerText = slider.value;
+  span.innerText = slider.value + " %";
 
 }
 
@@ -10,7 +10,7 @@ function changeInnerText(btnGray) {
     btnGray.innerText = "GrayScale";
   }
   else {
-    btnGray.innerText = "RGB";
+    btnGray.innerText = "Reset";
   }
 }  
 
@@ -19,8 +19,9 @@ function changeLabel(checkbox){
   var label = document.getElementById("switch_label")
   var sliders = document.getElementsByClassName("slider")
   var bg;
+
   if (checkbox.checked){
-    label.innerText = "Brightness";
+    label.innerText = "Value: (Red, Green, Blue)";
     bg = [
       "linear-gradient(90deg, black 0%, rgba(255,0,0,1) 50%, white 100%)",
       "linear-gradient(90deg, black 0%, rgba(0,255,0,1) 50%, white 100%)",
@@ -39,8 +40,4 @@ function changeLabel(checkbox){
   for(i = 0; i < sliders.length; i++){
     sliders[i].style.background = bg[i];
   }
-}
-
-function changeSrc(image){
-  image.src = "/media/images/project_image.jpg"
 }

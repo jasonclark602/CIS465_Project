@@ -7,6 +7,18 @@ body {
     color: white;
 }
 
+h1 {
+    color: rgb(33, 36, 34);
+    text-align: center;
+    font-size: 5em;
+    margin-block-start: 0.37em;
+    margin-block-end: 0.37em;
+}
+
+h2 {
+    font-size: 2em;
+}
+
 button {
     text-align: center;
     padding: 10px;
@@ -14,7 +26,7 @@ button {
     transition: all 0.3s ease;
     color: white;
     font-size: 28px;
-    background-color: rgb(75, 75, 75);
+    background-color: rgb(55, 72, 82);
     border-radius: 5px;
 }
 
@@ -38,6 +50,7 @@ button:active {
     background-color: rgb(34, 34, 34);
     width: 400px;
     height: 90%;
+    box-shadow: 20px 20px 50px rgba(0, 0, 0, 0.521);
 }
 
 #basic_form {
@@ -56,6 +69,11 @@ button:active {
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
+
+}
+
+#main_img_container {
+    box-shadow: inset 20px 20px 10px #000000;
 }
 
 #img_histogram{
@@ -67,20 +85,20 @@ button:active {
 }
 
 .slidecontainer {
-width: 100%;
+    width: 100%;
 }
 
 .slider {
--webkit-appearance: none;
-appearance: none;
-width: 100%;
-height: 25px; 
-background: #d3d3d3;
-outline: none;
-opacity: 0.7;
--webkit-transition: .2s;
-transition: opacity .2s;
-border-radius: 5px;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 25px; 
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    border-radius: 5px;
 }
 
 .slider.brightness#red_slider {
@@ -97,6 +115,17 @@ border-radius: 5px;
 
 .slider:hover {
 opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px; 
+    height: 25px; 
+    background: white;
+    border: 2px solid #2196F3;
+    cursor: pointer;
+    border-radius: 25%; 
 }
 
 /* The switch - the box around the slider */
@@ -154,10 +183,12 @@ input:checked + .toggle:before {
   transform: translateX(26px);
 }
 
-.switch label{
+#switch_label{
     position: relative;
-    left: 150px;
-    font-size: larger;
+    top: -50px;
+    left: 75px;
+    width: 100px;
+    font-size: large;
 }
 
 .toggle.round {
@@ -166,4 +197,33 @@ input:checked + .toggle:before {
   
 .toggle.round:before {
     border-radius: 5px;
+}
+
+.bg_bar {
+    width: 100%;
+    height: 85px;
+    background: white;
+    position: absolute;
+    z-index: -1;
+    box-shadow: 20px 20px 50px rgba(0, 0, 0, 0.521);
+}
+
+#top_bg_bar {
+    top: 0%;
+}
+
+#bot_bg_bar {
+    bottom: 0%;
+}
+
+#upload_form {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 135px;
+    background: rgb(94, 94, 94);
+}
+
+#upload_form label {
+    font-size: 26px;
 }
