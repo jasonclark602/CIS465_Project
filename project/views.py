@@ -1,106 +1,123 @@
-from django.http import HttpResponse
+from PIL import Image as Img
+from django.shortcuts import render, get_object_or_404
 
-from django.http import HttpResponse 
-from django.shortcuts import render, redirect 
+from .ImageAdjuster import _base, _histogram, entropy, _adjust_brightness, _difference_transformation, _reset
+from .constants import *
 from .forms import *
 
+SLIDERS = ()
+CONTEXT = {}
+UPLOADED_IMG = False
+STARTUP = True
 
-# Image and other imports
-import numpy as np
-import os
-from PIL import Image
-import math
-import sqlite3
-  
-# Create your views here. 
-def image_view(request): 
-  
-    if request.method == 'POST': 
-        form = ImageForm(request.POST, request.FILES) 
-  
-        if form.is_valid(): 
-            form.save() 
-            return redirect('calculations') 
-    else: 
-        form = ImageForm() 
-    return render(request, 'home.html', {'form' : form}) 
-  
-def _histogram(img):
 
-    histogram = np.zeros(256)
-    for i in range(img.size[0]):
-        for j in range(img.size[1]):
-            color = img.getpixel((i,j))
-            num = color
-            histogram[num] += 1
+# Create your views here.
+def index(request):
+    global STARTUP, SLIDERS, CONTEXT
 
-    return histogram
+    if STARTUP:
+        val = get_object_or_404(RGBAdjustments, pk=1)
+        SLIDERS = (
+            Color('Red', val.red_value),
+            Color('Green', val.green_value),
+            Color('Blue', val.blue_value)
+        )
 
-def _entropy(probabilities):
+        base = get_object_or_404(BaseAdjustment, pk=1)
+        base.is_gray = False
+        base.save()
 
-    num = 0
-    for x in probabilities:
-        if x ==0:
-            continue
-        num += x*math.log2(x)
-    
-    num *= -1
+        CONTEXT = {
+            'img_obj': EDIT_IMG_PATH,
+            'form': ImageForm(),
+            'base': 'Gray',
+            'sliders_': SLIDERS,
+            'diff_txt': 'Difference'
+        }
+        STARTUP = False
 
-    return num
+    return render(request, 'index.html', CONTEXT)
 
-def _difference_transormation(img):
-    img_copy = img.convert("L")
 
-    for x in range(img_copy.size[0]):
-        for y in range(img_copy.size[1]):
-            if x == 0:
-                continue
+def uploaded_photo(request):
+    global UPLOADED_IMG, CONTEXT
+    if request.method == 'POST' and request.FILES is not None:
+        form = ImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+
+            try:
+                image = Img.open(PROJ_IMG_PATH)
+                image.save(EDIT_IMG_PATH)
+            except IOError as e:
+                print(e)
+                print('Could not duplicate image for edit.')
+                raise e
+
+            UPLOADED_IMG = True
+            base = get_object_or_404(BaseAdjustment, pk=1)
+            base.is_gray = False
+            base.save()
+            diff = get_object_or_404(Difference, pk=1)
+            diff.is_diff = False
+            diff.save()
+
+            _histogram()
+
+            CONTEXT.update({
+                'url_histogram': str(HIST_IMG_PATH[1:]),
+                'img_url': str(EDIT_IMG_PATH[1:]),
+                'entropy': entropy(),
+            })
+    else:
+        index(request)
+
+    return render(request, 'index.html', CONTEXT)
+
+
+def update(request):
+    if UPLOADED_IMG:
+        base = get_object_or_404(BaseAdjustment, pk=1)
+        if 'base' in request.POST:
+            base.is_gray = not base.is_gray
+            base.save()
+            _base(base.is_gray)
+            CONTEXT['base'] = 'Reset' if base.is_gray else 'Gray'
+            CONTEXT['hist_base_txt'] = 'Gray' if base.is_gray else 'RGB'
+        elif 'basic' in request.POST and not base.is_gray:
+            rgb = get_object_or_404(RGBAdjustments, pk=1)
+            rgb.red_value = int(request.POST['Red_slider'])
+            rgb.green_val = int(request.POST['Green_slider'])
+            rgb.blue_value = int(request.POST['Blue_slider'])
+            rgb.save()
+
+            SLIDERS[0].val = rgb.red_value
+            SLIDERS[1].val = rgb.green_val
+            SLIDERS[2].val = rgb.blue_value
+
+            _adjust_brightness(rgb.red_value, rgb.green_val, rgb.blue_value)
+
+        elif 'diff_trans' in request.POST:
+            diff = get_object_or_404(Difference, pk=1)
+            if not diff.is_diff:
+                _difference_transformation()
+                diff.is_diff = True
+                diff.save()
+                base.is_gray = True
+                base.save()
+                CONTEXT['diff_txt'] = 'Reset'
             else:
-                num1 = img_copy.getpixel((x,y))
-                num2 = img_copy.getpixel((x-1, y))
-                result = (num1-num2)%256
-                img.putpixel((x,y), result)
-    return img
+                _reset()
+                diff.is_diff = False
+                diff.save()
+                base.is_gray = False
+                base.save()
+                CONTEXT['diff_txt'] = 'Difference'
+                CONTEXT['hist_base_txt'] = 'RGB'
+        elif 'reset' in request.POST:
+            _reset()
 
+        _histogram()
+        CONTEXT['entropy'] = entropy()
 
-def calculations(request): 
-    path = os.path.abspath('.') + '\media\images\project_image.jpg'
-
-    path = path.replace('\\', '/')
-    
-    img = Image.open(path)
-    entropy = 0
-    entropy2 = 0
-
-    gray_img = img.convert("L")
-    gray_img.save("./media/images/gray_project_image.jpg")
-
-    total_pixels = gray_img.size[0] * gray_img.size[1]
-
-    # Histogram Calculation to Get probability
-    probabilities = _histogram(gray_img)
-
-    # Adjust array to contain P(r) values by dividing each element by total_pixels
-    for x in range(len(probabilities)):
-        probabilities[x] = probabilities[x]/total_pixels
-    
-    # Calculate the Entropy
-    entropy = _entropy(probabilities)
-
-
-    difference_img = _difference_transormation(gray_img)
-    difference_img.save("./media/images/difference_image.jpg")
-
-    probabilities2 = _histogram(difference_img)
-
-    # Adjust array to contain P(r) values by dividing each element by total_pixels
-    for x in range(len(probabilities2)):
-        probabilities2[x] = probabilities2[x]/total_pixels
-    
-    # Calculate the Entropy
-    entropy2 = _entropy(probabilities2)
-    
-
-    return render(request, 'calculations.html', {'first_entropy':entropy, 
-                                                'second_entropy':entropy2,
-                                                    })
+    return render(request, 'index.html', CONTEXT)

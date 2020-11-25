@@ -1,0 +1,229 @@
+body {
+    display: flex;
+    background-color: gray;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, Helvetica, sans-serif;
+    color: white;
+}
+
+h1 {
+    color: rgb(33, 36, 34);
+    text-align: center;
+    font-size: 5em;
+    margin-block-start: 0.37em;
+    margin-block-end: 0.37em;
+}
+
+h2 {
+    font-size: 2em;
+}
+
+button {
+    text-align: center;
+    padding: 10px;
+    margin: 10px;
+    transition: all 0.3s ease;
+    color: white;
+    font-size: 28px;
+    background-color: rgb(55, 72, 82);
+    border-radius: 5px;
+}
+
+#btn_grayscale{
+    width: 95%;
+}
+
+button:hover {
+    background-color: #4CAF50;
+}
+
+button:active {
+    background-color: #317433;
+}
+
+#right_sidebar {
+    justify-content: center;
+    align-content: center;
+    padding: 20px;
+    margin-left: 20px;
+    background-color: rgb(34, 34, 34);
+    width: 400px;
+    height: 90%;
+    box-shadow: 20px 20px 50px rgba(0, 0, 0, 0.521);
+}
+
+#basic_form {
+    background-color: rgb(71, 71, 71);
+    padding: 10px
+}
+
+#top_left {
+    display: flex;
+    flex-direction: column;
+}
+
+#img_main {
+    width: 1000px;
+    background-image: url("./images/upload.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+
+}
+
+#main_img_container {
+    box-shadow: inset 20px 20px 10px #000000;
+}
+
+#img_histogram{
+    width: 400px;
+    height: 300px;
+    background-image: url("./images/histogram.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.slidecontainer {
+    width: 100%;
+}
+
+.slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 25px; 
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    border-radius: 5px;
+}
+
+.slider.brightness#red_slider {
+    background: linear-gradient(90deg, black 0%, rgba(255,0,0,1) 50%, white 100%);
+}
+
+.slider.brightness#green_slider {
+    background: linear-gradient(90deg, black 0%, rgba(0,255,0,1) 50%, white 100%);
+}
+
+.slider.brightness#blue_slider {
+    background: linear-gradient(90deg, black 0%, rgba(0,0,255,1) 50%, white 100%);
+}
+
+.slider:hover {
+opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px; 
+    height: 25px; 
+    background: white;
+    border: 2px solid #2196F3;
+    cursor: pointer;
+    border-radius: 25%; 
+}
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  margin: 20px 0 20px 0;
+  display: block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.toggle {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgb(204, 204, 204);
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.toggle:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .toggle {
+  background-color: #2196F3;
+}
+
+input:focus + .toggle {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .toggle:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+#switch_label{
+    position: relative;
+    top: -50px;
+    left: 75px;
+    width: 100px;
+    font-size: large;
+}
+
+.toggle.round {
+    border-radius: 5px;
+}
+  
+.toggle.round:before {
+    border-radius: 5px;
+}
+
+.bg_bar {
+    width: 100%;
+    height: 85px;
+    background: white;
+    position: absolute;
+    z-index: -1;
+    box-shadow: 20px 20px 50px rgba(0, 0, 0, 0.521);
+}
+
+#top_bg_bar {
+    top: 0%;
+}
+
+#bot_bg_bar {
+    bottom: 0%;
+}
+
+#upload_form {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 135px;
+    background: rgb(94, 94, 94);
+}
+
+#upload_form label {
+    font-size: 26px;
+}

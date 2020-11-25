@@ -1,0 +1,62 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="{% static 'project/style.css' %}" rel="stylesheet" type="text/css"/>
+    <script src="{% static 'project/action.js' %}"></script>
+</head>
+<span class="bg_bar" id="top_bg_bar"></span>
+<div>
+    <div>
+        <h1>Image Enhancement</h1>
+        <div id="main_img_container">
+            <img alt="User Image" id="img_main" src="{{ img_url }}">
+        </div>
+    </div>
+    <div>
+        <form action="{% url 'project:uploaded_photo' %}" autocomplete="off" enctype="multipart/form-data" id="upload_form"
+              method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" value="Upload">Upload</button>
+        </form>
+    </div>
+</div>
+
+<!-- Adjustments Panel -->
+<div class="panel" id="right_sidebar">
+    <h2>Basic Adjustments</h2>
+    <form action="{% url 'project:update' %}" method="POST">
+        {% csrf_token %}
+        <button id="btn_grayscale" name="base">{{ base }}</button>
+    </form>
+    <form action="{% url 'project:update' %}" id="basic_form" method="POST">
+        {% csrf_token %}
+        <label class="switch">
+            <input checked onclick="changeLabel(this)" type="checkbox">
+            <span class="toggle round"></span>
+        </label>
+        <label id="switch_label">Value: (Red, Green, Blue)</label>
+        <div>
+            {% for s in sliders_ %}
+            <label for="{{ s.name }}_slider">{{ s.name }} <span id="{{ s.name }}_span">{{ s.val }} %</span></label>
+            <input class="slider brightness" id="{{ s.name }}_slider" max="100" min="0"
+                   name="{{ s.name }}_slider" oninput="getValue(this, '{{ s.name }}_span')" step="1" type="range"
+                   value="{{ s.val }}">
+            <br>
+            {% endfor %}
+        </div>
+        <button name="basic" type="submit">Update</button>
+        <button name="reset" type="submit">Reset</button>
+    </form>
+    <h2>Advanced Adjustments</h2>
+    <form action="{% url 'project:update' %}" id="advanced_form" method="POST">
+        {% csrf_token %}
+        <button name="diff_trans">{{ diff_txt }}</button>
+    </form>
+    <h2>Metrics</h2>
+    <div>Entropy: {{ entropy }}</div>
+    <h2>{{ hist_base_txt }} Histogram</h2>
+    <div><img alt="Histogram" id="img_histogram" src="{{ url_histogram }}"/></div>
+</div>
+<span class="bg_bar" id="bot_bg_bar"></span>

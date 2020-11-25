@@ -1,11 +1,11 @@
-from pathlib import Path
 import os
+from pathlib import Path
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
-MEDIA_ROOT =  os.path.join(BASE_DIR, 'media') 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '2ajeki2!_b3ib0v=bbcfjb771nucg1&%ugdp5o&pz)e)1e)iof'
@@ -14,7 +14,6 @@ SECRET_KEY = '2ajeki2!_b3ib0v=bbcfjb771nucg1&%ugdp5o&pz)e)1e)iof'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -25,7 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'project', 
+    'project.apps.ProjectConfig',
 ]
 
 MIDDLEWARE = [
@@ -66,6 +65,6 @@ DATABASES = {
 }
 
 # Static files (CSS, JavaScript, Images)
-
-
+# https://docs.djangoproject.com/en/3.1/howto/static-files/
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
